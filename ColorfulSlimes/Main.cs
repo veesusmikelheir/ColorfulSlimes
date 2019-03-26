@@ -37,11 +37,6 @@ namespace ColorfulSlimes
             g.layer = LayerMask.NameToLayer("Actor");
             g.AddComponent<Vacuumable>().size = Vacuumable.Size.LARGE;
             LookupRegistry.RegisterIdentifiablePrefab(g);
-            SRCallbacks.OnSaveGameLoaded += (t) =>
-            {
-                SRBehaviour.InstantiateActor(g, t.GameModel.GetPlayerModel().position,
-                    t.GameModel.GetPlayerModel().rotation);
-            };
 
         }
         public override void PostLoad()
