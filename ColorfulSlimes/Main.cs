@@ -36,6 +36,8 @@ namespace ColorfulSlimes
             g.AddComponent<Identifiable>().id = id;
             g.layer = LayerMask.NameToLayer("Actor");
             g.AddComponent<Vacuumable>().size = Vacuumable.Size.LARGE;
+
+            g.transform.GetChild(0).gameObject.AddComponent<VacDelaunchTrigger>();
             LookupRegistry.RegisterIdentifiablePrefab(g);
 
         }
