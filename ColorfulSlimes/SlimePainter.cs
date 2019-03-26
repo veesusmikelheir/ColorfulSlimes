@@ -13,10 +13,20 @@ namespace ColorfulSlimes
     public class SlimePainter : RegisteredActorBehaviour, ExtendedData.Participant, RegistryFixedUpdateable
     {
         private CompoundDataPiece ourPiece;
-
         private RegionMember regionMember;
-
         private SplatOnImpact splatOnImpact;
+
+        private float curTime;
+        private Color newTop = new Color(Random.value, Random.value, Random.value, Random.value);
+        private Color newMid = new Color(Random.value, Random.value, Random.value, Random.value);
+        private Color newBot = new Color(Random.value, Random.value, Random.value, Random.value);
+
+        private static int topColorNameId = Shader.PropertyToID("_TopColor");
+        private static int middleColorNameId = Shader.PropertyToID("_MiddleColor");
+        private static int bottomColorNameId = Shader.PropertyToID("_BottomColor");
+
+        List<GameObjectActorModelIdentifiableIndex.Entry> toyCache = new List<GameObjectActorModelIdentifiableIndex.Entry>();
+
         public void Awake()
         {
             regionMember = GetComponent<RegionMember>();
@@ -62,14 +72,6 @@ namespace ColorfulSlimes
                 ourPiece.GetValue<Color>("bottom"));
         }
 
-        
-
-        private static int topColorNameId = Shader.PropertyToID("_TopColor");
-
-        private static int middleColorNameId = Shader.PropertyToID("_MiddleColor");
-
-        private static int bottomColorNameId = Shader.PropertyToID("_BottomColor");
-
         public void SetData(CompoundDataPiece piece)
         {
             
@@ -78,8 +80,6 @@ namespace ColorfulSlimes
             SetColors();
         }
 
-        List<GameObjectActorModelIdentifiableIndex.Entry> toyCache = new List<GameObjectActorModelIdentifiableIndex.Entry>();
-
         public bool CheckRaving()
         {
             toyCache.Clear();
@@ -87,14 +87,6 @@ namespace ColorfulSlimes
             
             return toyCache.Any((x) => x.Id == Main.RAVE_BALL_ID&&x.gameObject!=null&&Vector3.Distance(x.gameObject.transform.position,transform.position)<10f);
         }
-
-        private float curTime;
-
-        private Color newTop = new Color(Random.value, Random.value, Random.value, Random.value);
-
-        private Color newMid = new Color(Random.value, Random.value, Random.value, Random.value);
-
-        private Color newBot= new Color(Random.value, Random.value, Random.value, Random.value);
 
         public void RegistryFixedUpdate()
         {

@@ -17,27 +17,28 @@ namespace ColorfulSlimes
 {
     public class Main : ModEntryPoint
     {
-        const string raveball_key = "t.rave_ball_toy";
-        private const string raveball_ui_key = "m.toy.name.t.rave_ball_toy";
-        private const string raveball_desc_key = "m.toy.desc.t.rave_ball_toy";
-        public static Identifiable.Id RAVE_BALL_ID = (Identifiable.Id)9988;
+        const string RAVEBALL_KEY = "t.rave_ball_toy";
+        private const string RAVEBALL_UI_KEY = "m.toy.name.t.rave_ball_toy";
+        private const string RAVEBALL_DESC_KEY = "m.toy.desc.t.rave_ball_toy";
+        public const Identifiable.Id RAVE_BALL_ID = (Identifiable.Id)9988;
         public override void PreLoad(HarmonyInstance instance)
         {
             instance.PatchAll(Assembly.GetExecutingAssembly());
             
-            TranslationPatcher.AddTranslationKey("pedia",raveball_key,"Rave Ball");
-            TranslationPatcher.AddTranslationKey("pedia", raveball_ui_key, "Rave Ball");
-            TranslationPatcher.AddTranslationKey("pedia", raveball_desc_key,
+            TranslationPatcher.AddTranslationKey("pedia",RAVEBALL_KEY,"Rave Ball");
+            TranslationPatcher.AddTranslationKey("pedia", RAVEBALL_UI_KEY, "Rave Ball");
+            TranslationPatcher.AddTranslationKey("pedia", RAVEBALL_DESC_KEY,
                 "This ball may look plain, but it makes slimes want to party!");
-            var id = IdentifiablePatcher.CreateIdentifiableId(RAVE_BALL_ID, "RAVE_BALL_TOY");
+            IdentifiablePatcher.CreateIdentifiableId(RAVE_BALL_ID, "RAVE_BALL_TOY");
             var g = AssetBundle.LoadFromStream(Assembly.GetExecutingAssembly().GetManifestResourceStream(typeof(Main), "colorfulslimes")).LoadAsset<GameObject>("raveball");
 
             g.AddComponent<RegionMember>();
-            g.AddComponent<Identifiable>().id = id;
+            g.AddComponent<Identifiable>().id = RAVE_BALL_ID;
             g.layer = LayerMask.NameToLayer("Actor");
             g.AddComponent<Vacuumable>().size = Vacuumable.Size.LARGE;
-
+            g.AddComponent<Raveball>();
             g.transform.GetChild(0).gameObject.AddComponent<VacDelaunchTrigger>();
+            
             LookupRegistry.RegisterIdentifiablePrefab(g);
 
         }
@@ -47,7 +48,7 @@ namespace ColorfulSlimes
             {
                 cost = 1000,
                 icon = GameContext.Instance.LookupDirector.toyDict[Identifiable.Id.DISCO_BALL_TOY].icon,
-                nameKey = raveball_key,
+                nameKey = RAVEBALL_KEY,
                 toyId = RAVE_BALL_ID
             };
             GameContext.Instance.LookupDirector.toyEntries.Add(toyEntry);
