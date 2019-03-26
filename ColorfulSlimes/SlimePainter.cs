@@ -16,9 +16,11 @@ namespace ColorfulSlimes
 
         private RegionMember regionMember;
 
+        private SplatOnImpact splatOnImpact;
         public void Awake()
         {
             regionMember = GetComponent<RegionMember>();
+            splatOnImpact = GetComponent<SplatOnImpact>();
         }
         public void InitData(CompoundDataPiece piece)
         {
@@ -26,12 +28,10 @@ namespace ColorfulSlimes
             comp.SetPiece("top", new Color(Random.value, Random.value, Random.value, Random.value));
             comp.SetPiece("middle", new Color(Random.value, Random.value, Random.value, Random.value));
             comp.SetPiece("bottom", new Color(Random.value, Random.value, Random.value, Random.value));
-            comp.SetPiece("isdisco", false);
         }
 
         public bool IsDataValid(CompoundDataPiece piece)
         {
-            Debug.Log("are we valid? "+piece.HasPiece("slimecolors"));
             return piece.HasPiece("slimecolors");
         }
 
@@ -46,6 +46,12 @@ namespace ColorfulSlimes
                 slimeRenderer.material = h;
             }
 
+            if (splatOnImpact)
+            {
+                splatOnImpact.topColor = top;
+                splatOnImpact.midColor = middle;
+                splatOnImpact.btmColor = bottom;
+            }
         }
 
         public void SetColors()
@@ -74,21 +80,47 @@ namespace ColorfulSlimes
 
         List<GameObjectActorModelIdentifiableIndex.Entry> toyCache = new List<GameObjectActorModelIdentifiableIndex.Entry>();
 
-        public void CheckRaving()
+        public bool CheckRaving()
         {
             toyCache.Clear();
             CellDirector.GetToysNearMember(regionMember, toyCache);
-            ourPiece.SetValue("isdisco",toyCache.Any((x) => x.Id == (Identifiable.Id) 9988));
+            
+            return toyCache.Any((x) => x.Id == Main.RAVE_BALL_ID&&x.gameObject!=null&&Vector3.Distance(x.gameObject.transform.position,transform.position)<10f);
         }
+
+        private float curTime;
+
+        private Color newTop = new Color(Random.value, Random.value, Random.value, Random.value);
+
+        private Color newMid = new Color(Random.value, Random.value, Random.value, Random.value);
+
+        private Color newBot= new Color(Random.value, Random.value, Random.value, Random.value);
 
         public void RegistryFixedUpdate()
         {
-            CheckRaving();
-            if (ourPiece.GetValue<bool>("isdisco"))
+            
+            if (CheckRaving())
             {
-                ourPiece.SetValue("top", new Color(Random.value, Random.value, Random.value, Random.value));
-                ourPiece.SetValue("middle", new Color(Random.value, Random.value, Random.value, Random.value));
-                ourPiece.SetValue("bottom", new Color(Random.value, Random.value, Random.value, Random.value));
+                var delta = Time.fixedDeltaTime*2;
+                curTime += delta;
+
+                ourPiece.SetValue("top", Color.Lerp(ourPiece.GetValue<Color>("top"),newTop, delta));
+                ourPiece.SetValue("middle", Color.Lerp(ourPiece.GetValue<Color>("middle"), newMid, delta));
+                ourPiece.SetValue("bottom", Color.Lerp(ourPiece.GetValue<Color>("bottom"), newBot, delta));
+                SetColors();
+
+                if (curTime >= 1)
+                {
+
+                    newTop = new Color(Random.value, Random.value, Random.value, Random.value);
+
+                    newMid = new Color(Random.value, Random.value, Random.value, Random.value);
+
+                    newBot = new Color(Random.value, Random.value, Random.value, Random.value);
+
+
+                    curTime = 0;
+                }
             }
         }
     }
