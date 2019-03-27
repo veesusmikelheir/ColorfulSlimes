@@ -24,9 +24,7 @@ namespace ColorfulSlimes
         {
             foreach (var v in GetComponentsInChildren<Renderer>())
             {
-                var mat = v.material;
-                mat.color = color;
-                v.material = mat;
+                v.material.color = color;
             }
         }
     }

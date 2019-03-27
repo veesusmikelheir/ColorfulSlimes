@@ -53,7 +53,6 @@ namespace ColorfulSlimes
                 h.SetColor(topColorNameId, top);
                 h.SetColor(middleColorNameId, middle);
                 h.SetColor(bottomColorNameId, bottom);
-                slimeRenderer.material = h;
             }
 
             if (splatOnImpact)
