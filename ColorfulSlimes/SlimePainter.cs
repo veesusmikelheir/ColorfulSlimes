@@ -12,7 +12,7 @@ namespace ColorfulSlimes
 {
     public class SlimePainter : RegisteredActorBehaviour, ExtendedData.Participant, RegistryFixedUpdateable
     {
-        private CompoundDataPiece ourPiece;
+        private CompoundDataPiece dataPiece;
         private RegionMember regionMember;
         private SplatOnImpact splatOnImpact;
 
@@ -34,15 +34,14 @@ namespace ColorfulSlimes
         }
         public void InitData(CompoundDataPiece piece)
         {
-            var comp = piece.GetCompoundPiece("slimecolors");
-            comp.SetPiece("top", new Color(Random.value, Random.value, Random.value, Random.value));
-            comp.SetPiece("middle", new Color(Random.value, Random.value, Random.value, Random.value));
-            comp.SetPiece("bottom", new Color(Random.value, Random.value, Random.value, Random.value));
+            piece.SetPiece("top", new Color(Random.value, Random.value, Random.value, Random.value));
+            piece.SetPiece("middle", new Color(Random.value, Random.value, Random.value, Random.value));
+            piece.SetPiece("bottom", new Color(Random.value, Random.value, Random.value, Random.value));
         }
 
         public bool IsDataValid(CompoundDataPiece piece)
         {
-            return piece.HasPiece("slimecolors");
+            return piece.HasPiece("top");
         }
 
         public void SetColors(Color top, Color middle, Color bottom)
@@ -66,15 +65,15 @@ namespace ColorfulSlimes
         public void SetColors()
         {
             SetColors(
-                ourPiece.GetValue<Color>("top"),
-                ourPiece.GetValue<Color>("middle"),
-                ourPiece.GetValue<Color>("bottom"));
+                dataPiece.GetValue<Color>("top"),
+                dataPiece.GetValue<Color>("middle"),
+                dataPiece.GetValue<Color>("bottom"));
         }
 
         public void SetData(CompoundDataPiece piece)
         {
-            
-            ourPiece = piece.GetCompoundPiece("slimecolors");
+
+            dataPiece = piece;
 
             SetColors();
         }
@@ -95,9 +94,9 @@ namespace ColorfulSlimes
                 var delta = Time.fixedDeltaTime*2;
                 curTime += delta;
 
-                ourPiece.SetValue("top", Color.Lerp(ourPiece.GetValue<Color>("top"),newTop, delta));
-                ourPiece.SetValue("middle", Color.Lerp(ourPiece.GetValue<Color>("middle"), newMid, delta));
-                ourPiece.SetValue("bottom", Color.Lerp(ourPiece.GetValue<Color>("bottom"), newBot, delta));
+                dataPiece.SetValue("top", Color.Lerp(dataPiece.GetValue<Color>("top"),newTop, delta));
+                dataPiece.SetValue("middle", Color.Lerp(dataPiece.GetValue<Color>("middle"), newMid, delta));
+                dataPiece.SetValue("bottom", Color.Lerp(dataPiece.GetValue<Color>("bottom"), newBot, delta));
                 SetColors();
 
                 if (curTime >= 1)
