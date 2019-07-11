@@ -12,9 +12,10 @@ namespace ColorfulSlimes
 {
     public class SlimePainter : RegisteredActorBehaviour, ExtendedData.Participant, RegistryFixedUpdateable
     {
-        private CompoundDataPiece dataPiece;
+        internal CompoundDataPiece dataPiece;
         private RegionMember regionMember;
         private SplatOnImpact splatOnImpact;
+        private SlimeAppearanceApplicator appearanceApplicator;
 
         private float curTime;
         private Color newTop = new Color(Random.value, Random.value, Random.value, Random.value);
@@ -31,6 +32,20 @@ namespace ColorfulSlimes
         {
             regionMember = GetComponent<RegionMember>();
             splatOnImpact = GetComponent<SplatOnImpact>();
+            appearanceApplicator = GetComponent<SlimeAppearanceApplicator>();
+            appearanceApplicator.OnAppearanceChanged += SetColors;
+        }
+
+        public new void OnDestroy()
+        {
+            base.OnDestroy();
+            appearanceApplicator.OnAppearanceChanged -= SetColors;
+            
+        }
+
+        void SetColors(SlimeAppearance appearance)
+        {
+            SetColors();
         }
         public void InitData(CompoundDataPiece piece)
         {
@@ -46,7 +61,7 @@ namespace ColorfulSlimes
 
         public void SetColors(Color top, Color middle, Color bottom)
         {
-            foreach (var slimeRenderer in GetComponentsInChildren<Renderer>())
+            foreach (var slimeRenderer in GetComponentsInChildren<Renderer>(true))
             {
                 var h = slimeRenderer.material;
                 h.SetColor(topColorNameId, top);
@@ -54,12 +69,8 @@ namespace ColorfulSlimes
                 h.SetColor(bottomColorNameId, bottom);
             }
 
-            if (splatOnImpact)
-            {
-                splatOnImpact.topColor = top;
-                splatOnImpact.midColor = middle;
-                splatOnImpact.btmColor = bottom;
-            }
+
+            
         }
 
         public void SetColors()
@@ -68,6 +79,11 @@ namespace ColorfulSlimes
                 dataPiece.GetValue<Color>("top"),
                 dataPiece.GetValue<Color>("middle"),
                 dataPiece.GetValue<Color>("bottom"));
+        }
+
+        public void Start()
+        {
+            if(dataPiece!=null) SetColors();
         }
 
         public void SetData(CompoundDataPiece piece)
@@ -83,7 +99,7 @@ namespace ColorfulSlimes
             toyCache.Clear();
             CellDirector.GetToysNearMember(regionMember, toyCache);
             
-            return toyCache.Any((x) => x.Id == Main.RAVE_BALL_ID&&x.gameObject!=null&&Vector3.Distance(x.gameObject.transform.position,transform.position)<10f);
+            return toyCache.Any((x) => x.Id == CustomIds.RAVE_BALL_TOY && x.gameObject!=null&&Vector3.Distance(x.gameObject.transform.position,transform.position)<10f);
         }
 
         public void RegistryFixedUpdate()
