@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
-using Console = SRML.Console.Console;
+using static ColorfulSlimes.Main;
 
 namespace ColorfulSlimes
 {
@@ -20,7 +20,7 @@ namespace ColorfulSlimes
         {
             if(args.Length != 4)
             {
-                Console.LogError("Incorrect number of arguments!");
+                consoleInstance.LogError("Incorrect number of arguments!");
                 return false;
             }
 
@@ -31,7 +31,7 @@ namespace ColorfulSlimes
             }
             catch
             {
-                Console.LogError("Invalid section");
+                consoleInstance.LogError("Invalid section");
                 return false;
             }
 
@@ -40,13 +40,13 @@ namespace ColorfulSlimes
             {
                 if(!int.TryParse(colorstring,out colorLocal))
                 {
-                    Console.LogError($"Color value {colorName} is invalid!");
+                    consoleInstance.LogError($"Color value {colorName} is invalid!");
                     return false;
                 }
 
                 if(colorLocal<0||colorLocal>255)
                 {
-                    Console.LogError("Color Values must be in the range 0 to 255!");
+                    consoleInstance.LogError("Color Values must be in the range 0 to 255!");
                 }
 
                 return true;
@@ -65,13 +65,13 @@ namespace ColorfulSlimes
                 painter = hit.collider.GetComponent<SlimePainter>();
                 if (!painter  || painter.dataPiece == null)
                 {
-                    Console.LogError("Invalid object!");
+                    consoleInstance.LogError("Invalid object!");
                     return false;
                 }
 
             }
             else{
-                Console.LogError("You aren't pointed at anything!");
+                consoleInstance.LogError("You aren't pointed at anything!");
                 return false;
             }
 
@@ -86,7 +86,6 @@ namespace ColorfulSlimes
                         painter.dataPiece.SetValue("middle", color);
                         break;
                     case Sections.BOTTOM:
-
                         painter.dataPiece.SetValue("bottom", color);
                         break;
                 }
@@ -108,8 +107,6 @@ namespace ColorfulSlimes
 
             return true; 
         }
-
-        
 
         public enum Sections
         {
