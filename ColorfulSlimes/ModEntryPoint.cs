@@ -63,10 +63,9 @@ namespace ColorfulSlimes
                 {
                     if (Identifiable.IsSlime(slimeIdent.id))
                     {
-                        // for real just checking gold and tarr just in case
-                        if (slimeIdent.gameObject && slimeIdent.id != Identifiable.Id.GOLD_GORDO 
-                        && slimeIdent.id != Identifiable.Id.GOLD_SLIME 
-                        && slimeIdent.id != Identifiable.Id.TARR_SLIME 
+                        // for real just checking gold and quicksilver just in case
+                        if (slimeIdent.gameObject && slimeIdent.id != Identifiable.Id.QUICKSILVER_SLIME 
+                        && slimeIdent.id != Identifiable.Id.GOLD_SLIME
                         && Configuration.SHOULD_RANDOMIZE_COLORS 
                         && !slimeIdent.gameObject.GetComponent<SlimePainter>())
                             slimeIdent.gameObject.AddComponent<SlimePainter>();
@@ -80,10 +79,7 @@ namespace ColorfulSlimes
                 {
                     if (Identifiable.IsGordo(gordoIdent.id))
                     {
-                        // for real just checking gold and tarr just in case
-                        if (gordoIdent.gameObject && gordoIdent.id != Identifiable.Id.GOLD_GORDO 
-                        && gordoIdent.id != Identifiable.Id.GOLD_SLIME 
-                        && gordoIdent.id != Identifiable.Id.TARR_SLIME 
+                        if (gordoIdent.gameObject && gordoIdent.id != Identifiable.Id.GOLD_GORDO
                         && Configuration.SHOULD_RANDOMIZE_COLORS 
                         && !gordoIdent.gameObject.GetComponent<GordoPainter>())
                             gordoIdent.gameObject.AddComponent<GordoPainter>();
@@ -96,7 +92,6 @@ namespace ColorfulSlimes
                     {
                         if (slimeIdent.gameObject && slimeIdent.id != Identifiable.Id.QUICKSILVER_SLIME 
                         && slimeIdent.id != Identifiable.Id.GOLD_SLIME 
-                        && slimeIdent.id != Identifiable.Id.TARR_SLIME 
                         && Configuration.SHOULD_RANDOMIZE_COLORS 
                         && !slimeIdent.gameObject.GetComponent<SlimePainter>())
                             slimeIdent.gameObject.AddComponent<SlimePainter>();
@@ -110,8 +105,7 @@ namespace ColorfulSlimes
             foreach (var slimeIdent in Identifiable.SLIME_CLASS)
             {
                 if (slimeIdent.GetPrefab() && slimeIdent != Identifiable.Id.QUICKSILVER_SLIME 
-                    && slimeIdent != Identifiable.Id.GOLD_SLIME 
-                    && slimeIdent != Identifiable.Id.TARR_SLIME 
+                    && slimeIdent != Identifiable.Id.GOLD_SLIME
                     && Configuration.SHOULD_RANDOMIZE_COLORS 
                     && !slimeIdent.GetPrefab().GetComponent<SlimePainter>())
                     slimeIdent.GetPrefab().AddComponent<SlimePainter>();
@@ -119,10 +113,7 @@ namespace ColorfulSlimes
 
             foreach (var largoIdent in Identifiable.LARGO_CLASS)
             {
-                // for real just checking gold and tarr just in case
-                if (largoIdent.GetPrefab() && largoIdent != Identifiable.Id.QUICKSILVER_SLIME 
-                    && largoIdent != Identifiable.Id.GOLD_SLIME 
-                    && largoIdent != Identifiable.Id.TARR_SLIME 
+                if (largoIdent.GetPrefab()
                     && Configuration.SHOULD_RANDOMIZE_COLORS 
                     && !largoIdent.GetPrefab().GetComponent<SlimePainter>())
                     largoIdent.GetPrefab().AddComponent<SlimePainter>();
@@ -130,11 +121,7 @@ namespace ColorfulSlimes
 
             foreach (var gordoIdent in Identifiable.GORDO_CLASS)
             {
-                // for real just checking gold and tarr just in case
                 if (gordoIdent.GetPrefab() && gordoIdent != Identifiable.Id.GOLD_GORDO 
-                    && gordoIdent != Identifiable.Id.QUICKSILVER_SLIME 
-                    && gordoIdent != Identifiable.Id.GOLD_SLIME 
-                    && gordoIdent != Identifiable.Id.TARR_SLIME 
                     && Configuration.SHOULD_RANDOMIZE_COLORS 
                     && !gordoIdent.GetPrefab().GetComponent<GordoPainter>())
                     gordoIdent.GetPrefab().AddComponent<GordoPainter>();

@@ -33,6 +33,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="0Harmony">
@@ -68,7 +69,6 @@
     <Compile Include="Raveball.cs" />
     <Compile Include="SetColorsCommand.cs" />
     <Compile Include="SlimePainter.cs" />
-    <Compile Include="SlimePainterV2.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="colorfulslimes" />
