@@ -16,7 +16,7 @@ namespace ColorfulSlimes
         private RegionMember regionMember;
         private SlimeAppearanceApplicator appearanceApplicator;
 
-        private float curTime;
+        private float currTime;
         private Color newTop = new Color(Random.value, Random.value, Random.value);
         private Color newMid = new Color(Random.value, Random.value, Random.value);
         private Color newBot = new Color(Random.value, Random.value, Random.value);
@@ -24,6 +24,7 @@ namespace ColorfulSlimes
         internal Color currTop;
         internal Color currMid;
         internal Color currBot;
+
         internal CompoundDataPiece dataPiece;
         readonly List<GameObjectActorModelIdentifiableIndex.Entry> toyCache = new List<GameObjectActorModelIdentifiableIndex.Entry>();
 
@@ -35,10 +36,14 @@ namespace ColorfulSlimes
 
         public new void Start()
         {
+            appearanceApplicator.OnAppearanceChanged += SetColors;
             if (!Configuration.SHOULD_RANDOMIZE_COLORS)
                 return;
-            SetColors();
-            appearanceApplicator.OnAppearanceChanged += SetColors;
+            SetColors(
+                new Color(Random.value, Random.value, Random.value),
+                new Color(Random.value, Random.value, Random.value),
+                new Color(Random.value, Random.value, Random.value)
+            );
         }
 
         public void ReadData(CompoundDataPiece piece)
@@ -49,9 +54,9 @@ namespace ColorfulSlimes
 
         public void WriteData(CompoundDataPiece piece)
         {
-            piece.SetPiece("top", new Color(Random.value, Random.value, Random.value));
-            piece.SetPiece("middle", new Color(Random.value, Random.value, Random.value));
-            piece.SetPiece("bottom", new Color(Random.value, Random.value, Random.value));
+            piece.SetPiece("top", currTop);
+            piece.SetPiece("middle", currMid);
+            piece.SetPiece("bottom", currBot);
         }
 
         public new void OnDestroy()
@@ -137,7 +142,6 @@ namespace ColorfulSlimes
             {
                 toyCache.Clear();
                 CellDirector.GetToysNearMember(regionMember, toyCache);
-
                 return toyCache.Any((x) => x.Id == Identifiable.Id.DISCO_BALL_TOY && x.gameObject != null && x.gameObject.GetComponent<Raveball>().enabled && Vector3.Distance(x.gameObject.transform.position, transform.position) < 10f);
             }
             else
@@ -149,7 +153,7 @@ namespace ColorfulSlimes
             if (CheckRaving())
             {
                 var delta = Time.fixedDeltaTime*2;
-                curTime += delta;
+                currTime += delta;
 
                 if (dataPiece != null)
                 {
@@ -159,13 +163,13 @@ namespace ColorfulSlimes
                 }
                 SetColors(true);
 
-                if (curTime >= 1)
+                if (currTime >= 1)
                 {
                     List<Color> generatedColors = Main.generatedColors;
                     newTop = generatedColors[Random.Range(0, generatedColors.Count)];
                     newMid = generatedColors[Random.Range(0, generatedColors.Count)];
                     newBot = generatedColors[Random.Range(0, generatedColors.Count)];
-                    curTime = 0;
+                    currTime = 0;
                 }
             }
         }

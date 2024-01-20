@@ -1,100 +1,93 @@
-﻿using System;
-using System.Collections;
+﻿global using SRML;
+global using UnityEngine;
+global using static Utility;
+
+using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Reflection.Emit;
-using HarmonyLib;
-using MonomiPark.SlimeRancher.Regions;
-using SRML;
+using ColorfulSlimes.Commands;
+using ColorfulSlimes.Components;
+using ColorfulSlimes.Components.Painters;
 using SRML.Config.Attributes;
 using SRML.SR;
 using SRML.SR.SaveSystem;
-using SRML.Utils.Enum;
-using UnityEngine;
 using static SRML.Console.Console;
 
 namespace ColorfulSlimes
 {
     [ConfigFile("ColorfulSlimesConfig")]
-    internal class Configuration
+    internal static class Config
     {
-        public static bool SHOULD_RANDOMIZE_COLORS = true;
+        public static bool SHOULD_MODIFY_PLORT_COLORS = false;
+
+        public static bool SHOULD_SAVE_RANDOMIZED_COLORS = true;
 
         public static bool SHOULD_RANDOMIZE_WITH_DISCO = true;
     }
 
-    public class RaveballActivator : UIActivator
-    {
-        public override GameObject Activate()
-        {
-            if (!Configuration.SHOULD_RANDOMIZE_WITH_DISCO)
-                return null;
-            GetComponent<Raveball>().enabled = !GetComponent<Raveball>().enabled;
-            return null;
-        }
-    }
-
     public class Main : ModEntryPoint
     {
-        public static ConsoleInstance consoleInstance = new ConsoleInstance("ColorfulSlimes");
-        public static List<Color> generatedColors = ModManager.GenerateColors(999);
-        /*const string RAVEBALL_KEY = "t.rave_ball_toy";
-        private const string RAVEBALL_UI_KEY = "m.toy.name.t.rave_ball_toy";
-        private const string RAVEBALL_DESC_KEY = "m.toy.desc.t.rave_ball_toy";*/
+        internal static readonly ConsoleInstance ModConsole = new ConsoleInstance("ColorfulSlimes");
+        internal static readonly List<Color> GeneratedColors = GenerateColors(999);
 
         public override void PreLoad()
         {
-            HarmonyInstance.PatchAll(Assembly.GetExecutingAssembly());
-            RegisterCommand(new SetColorsCommand());
+            HarmonyInstance.PatchAll();
+            RegisterCommand(new SetColors());
+            RegisterCommand(new GetColors());
+
+            SaveRegistry.RegisterDataParticipant<Raveball>();
+            SaveRegistry.RegisterDataParticipant<Painter>();
+
             SaveRegistry.RegisterDataParticipant<SlimePainter>();
+            SaveRegistry.RegisterDataParticipant<PlortPainter>();
+            SaveRegistry.RegisterDataParticipant<NoRaveballPainter>();
         }
 
         public override void Load()
         {
-            GameObject discoBallToy = Identifiable.Id.DISCO_BALL_TOY.GetPrefab();
-            discoBallToy.AddComponent<Raveball>().enabled = true;
-            discoBallToy.AddComponent<RaveballActivator>();
+            GameObject discoPrefab = Identifiable.Id.DISCO_BALL_TOY.GetPrefab();
+            discoPrefab.AddComponent<Raveball>().enabled = false;
+            discoPrefab.AddComponent<RaveballActivator>();
 
             SRCallbacks.OnMainMenuLoaded += delegate (MainMenuUI mainMenuUI)
             {
-                foreach (Identifiable slimeIdent in UnityEngine.Object.FindObjectsOfType<Identifiable>())
+                foreach (Identifiable identifiable in UnityEngine.Object.FindObjectsOfType<Identifiable>())
                 {
-                    if (Identifiable.IsSlime(slimeIdent.id))
+                    if (Identifiable.IsSlime(identifiable.id) && identifiable.id != Identifiable.Id.GOLD_SLIME)
                     {
-                        // for real just checking gold and quicksilver just in case
-                        if (slimeIdent.gameObject && slimeIdent.id != Identifiable.Id.QUICKSILVER_SLIME 
-                        && slimeIdent.id != Identifiable.Id.GOLD_SLIME
-                        && Configuration.SHOULD_RANDOMIZE_COLORS 
-                        && !slimeIdent.gameObject.GetComponent<SlimePainter>())
-                            slimeIdent.gameObject.AddComponent<SlimePainter>();
+                        if (!identifiable.gameObject.GetComponent<SlimePainter>())
+                            identifiable.gameObject.AddComponent<SlimePainter>();
                     }
                 }
             };
 
             SRCallbacks.OnSaveGameLoaded += delegate (SceneContext sceneContext)
             {
-                foreach (GordoIdentifiable gordoIdent in UnityEngine.Object.FindObjectsOfType<GordoIdentifiable>())
+                foreach (GordoIdentifiable gordoIdentifiable in UnityEngine.Object.FindObjectsOfType<GordoIdentifiable>())
                 {
-                    if (Identifiable.IsGordo(gordoIdent.id))
+                    if (Identifiable.IsGordo(gordoIdentifiable.id) && gordoIdentifiable.id != Identifiable.Id.GOLD_GORDO)
                     {
-                        if (gordoIdent.gameObject && gordoIdent.id != Identifiable.Id.GOLD_GORDO
-                        && Configuration.SHOULD_RANDOMIZE_COLORS 
-                        && !gordoIdent.gameObject.GetComponent<GordoPainter>())
-                            gordoIdent.gameObject.AddComponent<GordoPainter>();
+                        if (!gordoIdentifiable.gameObject.GetComponent<Painter>())
+                            gordoIdentifiable.gameObject.AddComponent<Painter>();
                     }
                 }
 
-                foreach (Identifiable slimeIdent in UnityEngine.Object.FindObjectsOfType<Identifiable>())
+                foreach (Identifiable identifiable in UnityEngine.Object.FindObjectsOfType<Identifiable>())
                 {
-                    if (Identifiable.IsSlime(slimeIdent.id))
+                    if (Identifiable.IsSlime(identifiable.id) && identifiable.id != Identifiable.Id.GOLD_SLIME)
                     {
-                        if (slimeIdent.gameObject && slimeIdent.id != Identifiable.Id.QUICKSILVER_SLIME 
-                        && slimeIdent.id != Identifiable.Id.GOLD_SLIME 
-                        && Configuration.SHOULD_RANDOMIZE_COLORS 
-                        && !slimeIdent.gameObject.GetComponent<SlimePainter>())
-                            slimeIdent.gameObject.AddComponent<SlimePainter>();
+                        if (!identifiable.gameObject.GetComponent<SlimePainter>())
+                            identifiable.gameObject.AddComponent<SlimePainter>();
+                    }
+
+                    if (Config.SHOULD_MODIFY_PLORT_COLORS)
+                    {
+                        if (Identifiable.IsPlort(identifiable.id) && identifiable.id != Identifiable.Id.GOLD_PLORT)
+                        {
+                            if (!identifiable.gameObject.GetComponent<PlortPainter>())
+                                identifiable.gameObject.AddComponent<PlortPainter>();
+                        }
                     }
                 }
             };
@@ -102,29 +95,19 @@ namespace ColorfulSlimes
 
         public override void PostLoad()
         {
-            foreach (var slimeIdent in Identifiable.SLIME_CLASS)
+            foreach (var prefab in GameContext.Instance.LookupDirector.identifiablePrefabs)
             {
-                if (slimeIdent.GetPrefab() && slimeIdent != Identifiable.Id.QUICKSILVER_SLIME 
-                    && slimeIdent != Identifiable.Id.GOLD_SLIME
-                    && Configuration.SHOULD_RANDOMIZE_COLORS 
-                    && !slimeIdent.GetPrefab().GetComponent<SlimePainter>())
-                    slimeIdent.GetPrefab().AddComponent<SlimePainter>();
-            }
+                if (Identifiable.IsSlime(Identifiable.GetId(prefab)) && Identifiable.GetId(prefab) != Identifiable.Id.GOLD_SLIME)
+                    prefab.AddComponent<SlimePainter>();
 
-            foreach (var largoIdent in Identifiable.LARGO_CLASS)
-            {
-                if (largoIdent.GetPrefab()
-                    && Configuration.SHOULD_RANDOMIZE_COLORS 
-                    && !largoIdent.GetPrefab().GetComponent<SlimePainter>())
-                    largoIdent.GetPrefab().AddComponent<SlimePainter>();
-            }
+                if (Identifiable.IsGordo(Identifiable.GetId(prefab)) && Identifiable.GetId(prefab) != Identifiable.Id.GOLD_GORDO)
+                    prefab.AddComponent<Painter>();
 
-            foreach (var gordoIdent in Identifiable.GORDO_CLASS)
-            {
-                if (gordoIdent.GetPrefab() && gordoIdent != Identifiable.Id.GOLD_GORDO 
-                    && Configuration.SHOULD_RANDOMIZE_COLORS 
-                    && !gordoIdent.GetPrefab().GetComponent<GordoPainter>())
-                    gordoIdent.GetPrefab().AddComponent<GordoPainter>();
+                if (Config.SHOULD_MODIFY_PLORT_COLORS)
+                {
+                    if (Identifiable.IsPlort(Identifiable.GetId(prefab)) && Identifiable.GetId(prefab) != Identifiable.Id.GOLD_PLORT)
+                        prefab.AddComponent<PlortPainter>();
+                }
             }
         }
     }
