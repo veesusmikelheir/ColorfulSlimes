@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -43,69 +44,29 @@ namespace ColorfulSlimes.Commands
                 return false;
             }
 
-            #region COLORS
-            string topHex = "#" + ColorUtility.ToHtmlStringRGB(painter.currTop);
-            string midHex = "#" + ColorUtility.ToHtmlStringRGB(painter.currMid);
-            string botHex = "#" + ColorUtility.ToHtmlStringRGB(painter.currBot);
-
-            int[] topRGB = new int[3]
-            {
-                Mathf.RoundToInt(painter.currTop.r * 255f),
-                Mathf.RoundToInt(painter.currTop.g * 255f),
-                Mathf.RoundToInt(painter.currTop.b * 255f),
-            };
-
-            int[] midRGB = new int[3]
-            {
-                Mathf.RoundToInt(painter.currMid.r * 255f),
-                Mathf.RoundToInt(painter.currMid.g * 255f),
-                Mathf.RoundToInt(painter.currMid.b * 255f),
-            };
-
-            int[] botRGB = new int[3]
-            {
-                Mathf.RoundToInt(painter.currBot.r * 255f),
-                Mathf.RoundToInt(painter.currBot.g * 255f),
-                Mathf.RoundToInt(painter.currBot.b * 255f),
-            };
-
-            string[] topFloat = new string[3]
-            {
-                painter.currTop.r.ToString($"F{4}"),
-                painter.currTop.g.ToString($"F{4}"),
-                painter.currTop.b.ToString($"F{4}"),
-            };
-
-            string[] midFloat = new string[3]
-            {
-                painter.currMid.r.ToString($"F{4}"),
-                painter.currMid.g.ToString($"F{4}"),
-                painter.currMid.b.ToString($"F{4}"),
-            };
-
-            string[] botFloat = new string[3]
-            {
-                painter.currBot.r.ToString($"F{4}"),
-                painter.currBot.g.ToString($"F{4}"),
-                painter.currBot.b.ToString($"F{4}"),
-            };
-            #endregion
+            string[] hexColors = ColorToHexArray(painter.currTop, painter.currMid, painter.currBot);
+            byte[][] rgbColors = ColorToRGBArray(painter.currTop, painter.currMid, painter.currBot);
+            string[][] floatColors = ColorToFloatArray(painter.currTop, painter.currMid, painter.currBot);
 
             string all =
                 $"""
                 -- {hit.collider.name.Replace("(Clone)", "")} --
+
                 --- Top
-                ---- HEX : {topHex}
-                ---- RGB : {topRGB[0]}, {topRGB[1]}, {topRGB[2]}
-                ---- FLOAT : {topFloat[0]}, {topFloat[1]}, {topFloat[2]}
+                ---- HEX : {hexColors[0]}
+                ---- RGB : {rgbColors[0][0]}, {rgbColors[0][1]}, {rgbColors[0][2]}
+                ---- FLOAT : {floatColors[0][0]}f, {floatColors[0][1]}f, {floatColors[0][2]}f
+
                 --- Middle
-                ---- HEX : {midHex}
-                ---- RGB : {midRGB[0]}, {midRGB[1]}, {midRGB[2]}
-                ---- FLOAT : {midFloat[0]}f, {midFloat[1]}f, {midFloat[2]}f
+                ---- HEX : {hexColors[1]}
+                ---- RGB : {rgbColors[1][0]}, {rgbColors[1][1]}, {rgbColors[1][2]}
+                ---- FLOAT : {floatColors[1][0]}f, {floatColors[1][1]}f, {floatColors[1][2]}f
+
                 --- Bottom
-                ---- HEX : {botHex}
-                ---- RGB : {botRGB[0]}, {botRGB[1]}, {botRGB[2]}
-                ---- FLOAT : {botFloat[0]}f, {botFloat[1]}f, {botFloat[2]}f
+                ---- HEX : {hexColors[2]}
+                ---- RGB : {rgbColors[2][0]}, {rgbColors[2][1]}, {rgbColors[2][2]}
+                ---- FLOAT : {floatColors[2][0]}f, {floatColors[2][1]}f, {floatColors[2][2]}f
+
                 Remove the `f` from floats if you're not using it for, presumably, developing reasons.
                 """;
 
@@ -137,6 +98,44 @@ namespace ColorfulSlimes.Commands
             }
 
             return true;
+        }
+
+        public string[] ColorToHexArray(params Color[] colors)
+        {
+            List<string> hexes = new();
+            for (int i = 0; i < colors.Length; i++)
+                hexes.Add(ColorUtility.ToHtmlStringRGB(colors[i]));
+            return hexes.ToArray();
+        }
+
+        public string[][] ColorToFloatArray(params Color[] colors)
+        {
+            List<string[]> floats = new();
+            for (int i = 0; i < colors.Length; i++)
+            {
+                floats.Add(new string[]
+                {
+                    colors[i].r.ToString($"F{4}"),
+                    colors[i].g.ToString($"F{4}"),
+                    colors[i].b.ToString($"F{4}")
+                });
+            }
+            return floats.ToArray();
+        }
+
+        public byte[][] ColorToRGBArray(params Color[] colors)
+        {
+            List<byte[]> rgbs = new();
+            for (int i = 0; i < colors.Length; i++)
+            {
+                rgbs.Add(new byte[]
+                {
+                    (byte)Mathf.RoundToInt(colors[i].r * 255f),
+                    (byte)Mathf.RoundToInt(colors[i].g * 255f),
+                    (byte)Mathf.RoundToInt(colors[i].b * 255f)
+                });
+            }
+            return rgbs.ToArray();
         }
 
         /*void PrintSection(Sections section, Painter painter)

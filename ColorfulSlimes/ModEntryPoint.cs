@@ -35,6 +35,8 @@ namespace ColorfulSlimes
             HarmonyInstance.PatchAll();
             RegisterCommand(new SetColors());
             RegisterCommand(new GetColors());
+            RegisterCommand(new CopyColors());
+            RegisterCommand(new PasteColors());
 
             SaveRegistry.RegisterDataParticipant<Raveball>();
             SaveRegistry.RegisterDataParticipant<Painter>();

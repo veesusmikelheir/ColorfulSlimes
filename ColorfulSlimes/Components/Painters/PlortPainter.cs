@@ -11,20 +11,13 @@ namespace ColorfulSlimes.Components.Painters
     {
         private RegionMember regionMember;
 
-        public event Action<PlortPainter> OnLateStart;
-
         public override void Awake()
         {
             base.Awake();
             regionMember = GetComponent<RegionMember>();
         }
 
-        public override void Start()
-        {
-            base.Start();
-            OnLateStart?.Invoke(this);
-            OnLateStart -= OnLateStart;
-        }
+        public override void Start() => base.Start();
 
         public override bool IsRaveballNearby()
         {

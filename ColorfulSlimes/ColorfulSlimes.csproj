@@ -40,8 +40,9 @@
     <Reference Include="0Harmony">
       <HintPath>..\..\..\..\..\System\SteamLibrary\steamapps\common\Slime Rancher\SRML\Libs\0Harmony.dll</HintPath>
     </Reference>
-    <Reference Include="Assembly-CSharp-Publicized">
-      <HintPath>C:\Users\Jay\Downloads\Assembly-CSharp-Publicized.dll</HintPath>
+    <Reference Include="Assembly-CSharp-Publicized, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\User\Documents+\Random\Assembly-CSharp-Publicized.dll</HintPath>
     </Reference>
     <Reference Include="SRML">
       <HintPath>..\..\..\..\..\System\SteamLibrary\steamapps\common\Slime Rancher\SlimeRancher_Data\Managed\SRML.dll</HintPath>
@@ -63,7 +64,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assist\Utility.cs" />
+    <Compile Include="Commands\CopyColors.cs" />
     <Compile Include="Commands\GetColors.cs" />
+    <Compile Include="Commands\PasteColors.cs" />
     <Compile Include="Commands\SetColors.cs" />
     <Compile Include="Components\Painters\NoRaveballPainter.cs" />
     <Compile Include="Components\Painter.cs" />

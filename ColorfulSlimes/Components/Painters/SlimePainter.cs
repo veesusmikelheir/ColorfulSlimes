@@ -20,6 +20,12 @@ namespace ColorfulSlimes.Components.Painters
 
         public override void Start()
         {
+            /* mainly for no randomization config
+            var baseMaterial = slimeAppearanceApplicator.Appearance.Structures[0].DefaultMaterials[0];
+            currTop = baseMaterial.GetColor("_TopColor");
+            currMid = baseMaterial.GetColor("_MiddleColor");
+            currBot = baseMaterial.GetColor("_BottomColor");*/
+
             base.Start();
             slimeAppearanceApplicator.OnAppearanceChanged += Paint;
         }

@@ -3,6 +3,7 @@ using SRML.SR.SaveSystem;
 using SRML.SR.SaveSystem.Data;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
 using System.Text;
 using System.Threading.Tasks;
 using static ColorfulSlimes.Main;
@@ -29,10 +30,7 @@ namespace ColorfulSlimes.Components
         public virtual void ReadData(CompoundDataPiece piece)
         {
             if (!Config.SHOULD_SAVE_RANDOMIZED_COLORS)
-            {
-                Paint();
                 return;
-            }
             dataPiece = piece;
         }
 
